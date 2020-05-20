@@ -1,5 +1,8 @@
 ;;; window-stash.el --- Stash Windows -*- mode: emacs-lisp; lexical-binding: t -*-
 
+(require 'avy)
+(require 'ace-window)
+
 (defun window-stash--display-buffer-at-direction (buffer direction window width height)
   ;; display current buffer in DIRECTION of WINDOW by WIDTH HEIGHT
   (display-buffer buffer 
@@ -22,8 +25,9 @@
   "find the window at most of DIRECTION from an INITIAL window"
   (let ((win initial))
     ;; find direction most
-    (while (-when-let (w (window-in-direction direction win))
-             (setq win w)))
+    (while (if-let (w (window-in-direction direction win))
+               (setq win w)
+             nil))
     win))
 
 (defun window-stash--next-stash-window-refer (initial)
@@ -71,7 +75,6 @@
 (defun window-stash--aw-select (start-window mode-line &optional action)
   "Return a selected other window.
 Amend MODE-LINE to the mode line for the duration of the selection."
-  (require 'ace-window)
   (let ((aw-action action)
         (wnd-list (window-stash--window-list start-window))
         window)

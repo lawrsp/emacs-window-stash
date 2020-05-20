@@ -46,7 +46,6 @@
          (direction (window-stash--next-stash-direction refer initial))
          (window-combination-limit nil)
          (window-combination-resize t))
-    (message "initial %s refer %s direction %s" initial refer direction)
     (window-stash--display-buffer-at-direction buffer direction refer 40 `balance-windows)))
 
 

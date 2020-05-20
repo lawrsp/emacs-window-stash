@@ -1,4 +1,4 @@
-;;; window-stash.el --- Stash Windows
+;;; window-stash.el --- Stash Windows -*- mode: emacs-lisp; lexical-binding: t -*-
 
 (defun window-stash--display-buffer-at-direction (buffer direction window width height)
   ;; display current buffer in DIRECTION of WINDOW by WIDTH HEIGHT
@@ -56,7 +56,7 @@
     (when (not (eq win initial) )
       (while win
         (when (window-dedicated-p win)
-          (add-to-list 'list win))
+          (push 'list win))
         (setq win  (window-in-direction 'below win))
         ))
     list))

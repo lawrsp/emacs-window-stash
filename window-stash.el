@@ -1,4 +1,4 @@
-;;; window-stash.el --- Quickly Stash Windows. -*- lexical-binding: t -*-
+;;; window-stash.el --- Quickly Stash Windows -*- lexical-binding: t -*-
 
 ; Copyright © 2020 lawrsp <lawrance.rsp@gmail.com>
 
@@ -45,8 +45,7 @@
                                                    (dedicated . t)
                                                    (window-width . ,width)
                                                    (window-height . ,height)
-                                                   (window-parameters . ((no-delete-other-windows . t)))
-                                                   ))))
+                                                   (window-parameters . ((no-delete-other-windows . t)))))))
 
 (defun window-stash--next-stash-direction (current initial)
   "get the next stash postion `right or `below'"
@@ -94,8 +93,7 @@
       (while win
         (when (window-dedicated-p win)
           (push win list))
-        (setq win  (window-in-direction 'below win))
-        ))
+        (setq win  (window-in-direction 'below win))))
     list))
 
 (defun window-stash--pop-it (selected window)
@@ -159,8 +157,7 @@ Amend MODE-LINE to the mode line for the duration of the selection."
      " Ace - Pop Stashed Window"
      (lambda (window)
        (with-selected-window window
-         (window-stash--pop-it selected window)))
-     )))
+         (window-stash--pop-it selected window))))))
 
 (provide 'window-stash)
 

@@ -23,11 +23,11 @@
 
 (defun window-stash--find-window-direction-most (initial direction)
   "find the window at most of DIRECTION from an INITIAL window"
-  (let ((win initial))
-    ;; find direction most
-    (while (if-let (w (window-in-direction direction win))
-               (setq win w)
-             nil))
+  (let ((w initial)
+        win)
+    (while w
+      (setq win w)
+      (setq w (window-in-direction direction win)))
     win))
 
 (defun window-stash--next-stash-window-refer (initial)
@@ -60,7 +60,7 @@
     (when (not (eq win initial) )
       (while win
         (when (window-dedicated-p win)
-          (push 'list win))
+          (push win list))
         (setq win  (window-in-direction 'below win))
         ))
     list))

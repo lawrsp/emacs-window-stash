@@ -1,4 +1,4 @@
-;;; window-stash.el --- Stash Windows -*- lexical-binding: t -*-
+;;; window-stash.el --- Stash Windows
 
 (defun window-stash--display-buffer-at-direction (buffer direction window width height)
   ;; display current buffer in DIRECTION of WINDOW by WIDTH HEIGHT
@@ -73,10 +73,6 @@
 Amend MODE-LINE to the mode line for the duration of the selection."
   (require 'ace-window)
   (let ((aw-action action)
-        (next-window-scope (cl-case aw-scope
-                             ('visible 'visible)
-                             ('global 'visible)
-                             ('frame 'frame)))
         (wnd-list (window-stash--window-list start-window))
         window)
     (setq window

@@ -5,7 +5,7 @@
 ;; Author: lawrsp <lawrance.rsp@gmail.com>
 ;; URL: https://github.com/lawrsp/eamcs-window-stash
 ;; Keywords: window, stash, convenience
-;; Version: 0.1.0
+;; Version: 0.1.1
 ;; Package-Requires: ((emacs "26.1") (avy "0.5.0") (ace-window "0.1.0"))
 
 ;; This file is NOT part of GNU Emacs.
@@ -150,7 +150,7 @@ Amend MODE-LINE to the mode line for the duration of the selection."
         (funcall aw-action window)
       window)))
 
-(defun window-stash-stash-pop ()
+(defun window-stash-pop ()
   "pop a buffer to current" 
   (interactive)
   (let ((selected (selected-window)))

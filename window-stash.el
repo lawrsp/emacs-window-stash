@@ -1,6 +1,6 @@
 ;;; window-stash.el --- Stash Windows -*- lexical-binding: t -*-
 
-(defun window-stash/display--buffer-at-direction (buffer direction window width height)
+(defun window-stash--display-buffer-at-direction (buffer direction window width height)
   ;; display current buffer in DIRECTION of WINDOW by WIDTH HEIGHT
   (display-buffer buffer 
                   `(display-buffer-in-direction . ((direction . ,direction)
@@ -12,13 +12,13 @@
                                                    (window-parameters . ((no-delete-other-windows . t)))
                                                    ))))
 
-(defun window-stash/get--next-stash-direction (current initial)
+(defun window-stash--next-stash-direction (current initial)
   "get the next stash postion `right or `below'"
   (if (eq current initial)
       'right
     'above))
 
-(defun window-stash/find--window-direction-most (initial direction)
+(defun window-stash--find-window-direction-most (initial direction)
   "find the window at most of DIRECTION from an INITIAL window"
   (let ((win initial))
     ;; find direction most
@@ -26,33 +26,33 @@
              (setq win w)))
     win))
 
-(defun window-stash/get--next-stash-window-refer (initial)
+(defun window-stash--next-stash-window-refer (initial)
   "get the next right fix window reference. right most and then below most"
   (let ((win initial))
     ;; find right most
-    (setq win (window-stash/find--window-direction-most win 'right))
+    (setq win (window-stash--find-window-direction-most win 'right))
     (when (not (eq win initial))
       ;; find below most
-      (setq win (window-stash/find--window-direction-most win 'above))) 
+      (setq win (window-stash--find-window-direction-most win 'above))) 
     win))
 
-(defun window-stash/stash ()
+(defun window-stash-stash ()
   "display current buffer to a dedicated window stashed at right of of main window"
   (interactive)
   ;; (with-selected-window (selected-window)
   (let* ((buffer (current-buffer))
          (initial (selected-window))
-         (refer (window-stash/get--next-stash-window-refer initial))
-         (direction (window-stash/get--next-stash-direction refer initial))
+         (refer (window-stash--next-stash-window-refer initial))
+         (direction (window-stash--next-stash-direction refer initial))
          (window-combination-limit nil)
          (window-combination-resize t))
     (message "initial %s refer %s direction %s" initial refer direction)
-    (window-stash/display--buffer-at-direction buffer direction refer 40 `balance-windows)))
+    (window-stash--display-buffer-at-direction buffer direction refer 40 `balance-windows)))
 
 
-(defun window-stash/window--list (initial)
+(defun window-stash--window-list (initial)
   ;; get all the stashed window
-  (let ((win (window-stash/get--next-stash-window-refer initial))
+  (let ((win (window-stash--next-stash-window-refer initial))
         list)
     (when (not (eq win initial) )
       (while win
@@ -62,14 +62,14 @@
         ))
     list))
 
-(defun window-stash/pop--it (selected window)
+(defun window-stash--pop-it (selected window)
   ;; if SELECTED is not equal to WINDOW,
   ;; set SELECTED content to WINDOW's and delete WINDOW
   (when (not (equal selected window))
     (set-window-buffer selected (window-buffer window))
     (delete-window window)))
 
-(defun window-stash/aw-select (start-window mode-line &optional action)
+(defun window-stash--aw-select (start-window mode-line &optional action)
   "Return a selected other window.
 Amend MODE-LINE to the mode line for the duration of the selection."
   (require 'ace-window)
@@ -78,7 +78,7 @@ Amend MODE-LINE to the mode line for the duration of the selection."
                              ('visible 'visible)
                              ('global 'visible)
                              ('frame 'frame)))
-        (wnd-list (window-stash/window--list start-window))
+        (wnd-list (window-stash--window-list start-window))
         window)
     (setq window
           (cond ((<= (length wnd-list) 1)
@@ -119,16 +119,19 @@ Amend MODE-LINE to the mode line for the duration of the selection."
         (funcall aw-action window)
       window)))
 
-(defun window-stash/stash-pop ()
+(defun window-stash-stash-pop ()
   "pop a buffer to current" 
   (interactive)
   (let ((selected (selected-window)))
-    (window-stash/aw-select
+    (window-stash--aw-select
      selected
      " Ace - Pop Stashed Window"
      (lambda (window)
        (with-selected-window window
-         (window-stash/pop--it selected window)))
+         (window-stash--pop-it selected window)))
      )))
 
 (provide 'window-stash)
+
+
+;;; window-stash.el ends here

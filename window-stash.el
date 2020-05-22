@@ -5,7 +5,7 @@
 ;; Author: lawrsp <lawrance.rsp@gmail.com>
 ;; URL: https://github.com/lawrsp/eamcs-window-stash
 ;; Keywords: window, stash, convenience
-;; Version: 0.1.1
+;; Version: 0.1.2
 ;; Package-Requires: ((emacs "26.1") (avy "0.5.0") (ace-window "0.1.0"))
 
 ;; This file is NOT part of GNU Emacs.
@@ -36,6 +36,27 @@
 (require 'avy)
 (require 'ace-window)
 
+(defvar window-stash-lay-side 'right
+  ;; which side of the stashed windows layed
+  )
+
+(defvar window-stash-grow-direction 'above
+  ;; which direction of the window stash grows
+  )
+
+(defvar window-stash-window-width 40
+  ;; if <= 0 will balance the window
+  ;; if integer will have columns
+  ;; if float  will have percent of main window
+  )
+
+(defvar window-stash-window-height 0
+ ;; if <= 0 will balance the window
+  ;; if integer will have lines
+  ;; if float  will have percent of main window
+  )
+
+
 (defun window-stash--display-buffer-at-direction (buffer direction window width height)
   ;; display current buffer in DIRECTION of WINDOW by WIDTH HEIGHT
   (display-buffer buffer 
@@ -47,11 +68,23 @@
                                                    (window-height . ,height)
                                                    (window-parameters . ((no-delete-other-windows . t)))))))
 
+(defun window-stash--get-window-width ()
+  ;; get window windth
+  (if (<= window-stash-window-width 0)
+       `balance-windows
+    window-stash-window-width))
+
+(defun window-stash--get-window-height ()
+  ;; get window height
+  (if (<= window-stash-window-height 0)
+      `balance-windows
+    window-stash-window-height))
+
 (defun window-stash--next-stash-direction (current initial)
-  "get the next stash postion `right or `below'"
+  "get the next stash postion `window-stash-lay-side or `window-stash-grow-direction"
   (if (eq current initial)
-      'right
-    'above))
+      window-stash-lay-side
+    window-stash-grow-direction))
 
 (defun window-stash--find-window-direction-most (initial direction)
   "find the window at most of DIRECTION from an INITIAL window"
@@ -63,26 +96,28 @@
     win))
 
 (defun window-stash--next-stash-window-refer (initial)
-  "get the next right fix window reference. right most and then below most"
+  "get the next fix window reference"
   (let ((win initial))
-    ;; find right most
-    (setq win (window-stash--find-window-direction-most win 'right))
+    ;; find lay side most
+    (setq win (window-stash--find-window-direction-most win window-stash-lay-side))
     (when (not (eq win initial))
-      ;; find below most
-      (setq win (window-stash--find-window-direction-most win 'above))) 
+      ;; find group direction most
+      (setq win (window-stash--find-window-direction-most win window-stash-grow-direction))) 
     win))
 
 (defun window-stash-stash ()
-  "display current buffer to a dedicated window stashed at right of of main window"
+  "display current buffer to a dedicated window stashed"
   (interactive)
   ;; (with-selected-window (selected-window)
   (let* ((buffer (current-buffer))
          (initial (selected-window))
          (refer (window-stash--next-stash-window-refer initial))
          (direction (window-stash--next-stash-direction refer initial))
+         (width (window-stash--get-window-width))
+         (height (window-stash--get-window-height))
          (window-combination-limit nil)
          (window-combination-resize t))
-    (window-stash--display-buffer-at-direction buffer direction refer 40 `balance-windows)))
+    (window-stash--display-buffer-at-direction buffer direction refer width height)))
 
 
 (defun window-stash--window-list (initial)
@@ -105,7 +140,8 @@
 
 (defun window-stash--aw-select (start-window mode-line &optional action)
   "Return a selected other window.
-Amend MODE-LINE to the mode line for the duration of the selection."
+Amend MODE-LINE to the mode line for the duration of the selection.
+Make a small modification of the orgith aw-select function of ace-widnow"
   (let ((aw-action action)
         (wnd-list (window-stash--window-list start-window))
         window)

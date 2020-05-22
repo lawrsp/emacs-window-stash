@@ -5,7 +5,7 @@
 ;; Author: lawrsp <lawrance.rsp@gmail.com>
 ;; URL: https://github.com/lawrsp/eamcs-window-stash
 ;; Keywords: window, stash, convenience
-;; Version: 0.1.2
+;; Version: 0.1.3
 ;; Package-Requires: ((emacs "26.1") (avy "0.5.0") (ace-window "0.1.0"))
 
 ;; This file is NOT part of GNU Emacs.
@@ -82,7 +82,8 @@
 
 (defun window-stash--next-stash-direction (current initial)
   "get the next stash postion `window-stash-lay-side or `window-stash-grow-direction"
-  (if (eq current initial)
+  (if (or (eq current initial)
+          (not (window-dedicated-p current)))
       window-stash-lay-side
     window-stash-grow-direction))
 
